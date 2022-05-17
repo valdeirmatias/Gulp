@@ -1,16 +1,26 @@
 const gulp = require('gulp')
-const image = require('gulp-imagemin')
 const concat = require('gulp-concat')
 const cssmin = require('gulp-cssmin')
 const rename = require('gulp-rename')
 const uglify = require('gulp-uglify')
+const image = require('gulp-imagemin')
+const stripJs = require('gulp-strip-comments')
+const stripCss = require('gulp-strip-css-comments')
+
 
 function tarefasCSS(cb) {
 
-    return gulp.src('./vendor/**/*.css')
-        .pipe(concat('libs.css'))
+    return gulp.src([
+        './node_modules/bootstrap/dist/css/bootstrap.css',
+        './node_modules/@fortawesome/fontawesome-free/css/fontawesome.css',
+        './vendor/owl/css/owl.css',
+        './vendor/jquery-ui/jquery-ui.css',
+        './src/css/style.css'
+    ])
+        .pipe(stripCss())
+        .pipe(concat('styles.css'))
         .pipe(cssmin())
-        .pipe(rename({ suffix: '.min' })) // libs.min.css
+        .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest('./dist/css'))
 
 }
@@ -18,10 +28,18 @@ function tarefasCSS(cb) {
 
 function tarefasJS() {
 
-    return gulp.src('./vendor/**/*.js')
-        .pipe(concat('libs.js'))
+    return gulp.src([
+        './node_modules/jquery/dist/jquery.js',
+        './node_modules/bootstrap/dist/js/bootstrap.js',
+        './vendor/owl/js/owl.js',
+        './vendor/jquery-mask/jquery.mask.js',
+        './vendor/jquery-ui/jquery-ui.js',
+        './src/js/custom.js'
+    ])
+        .pipe(stripJs())
+        .pipe(concat('scripts.js'))
         .pipe(uglify())
-        .pipe(rename({ suffix: '.min' })) //libs.min.js
+        .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest('./dist/js'))
 }
 
@@ -39,9 +57,9 @@ function tarefasImagem() {
             concurrent: 10,
             quiet: true
         }))
-        .pipe(gulp.dest('./dist/img'))
+        .pipe(gulp.dest('./dist/images'))
 }
 
-exports.images = tarefasImagem
 exports.styles = tarefasCSS
 exports.scripts = tarefasJS
+exports.images = tarefasImagem
